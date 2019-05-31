@@ -1,5 +1,6 @@
 package com.github.nicqiang.pointcloud.web;
 
+import com.github.nicqiang.pointcloud.algorithm.Denoising;
 import com.github.nicqiang.pointcloud.algorithm.simplify.GridKdTreeSimplifyPointCloud;
 import com.github.nicqiang.pointcloud.algorithm.simplify.RandomSimplifyPointCloud;
 import com.github.nicqiang.pointcloud.domain.Point;
@@ -32,9 +33,11 @@ public class TestController {
     public PointCloud getCubPoint(@RequestParam(required = false) Boolean noise){
         PointCloud pointCloud = null;
         if (noise == null || !noise){
-            pointCloud = DefaultCubPoint.getPointCloud(10000);
+            //pointCloud = DefaultCubPoint.getPointCloud(10000);
+            pointCloud = DefaultCubPoint.getPointCloudWithNosiy(10000, 100);
+            pointCloud = Denoising.dbScanReoveNoise(pointCloud);
         }else {
-            pointCloud = DefaultCubPoint.getPointCloudWithNosiy(10000);
+            pointCloud = DefaultCubPoint.getPointCloudWithNosiy(10000, 100);
         }
         return pointCloud;
     }

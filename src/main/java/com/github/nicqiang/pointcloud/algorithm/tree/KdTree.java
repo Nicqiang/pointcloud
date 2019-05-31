@@ -129,7 +129,7 @@ public class KdTree {
      * @param node2 {@link DataNode}
      * @return dist
      */
-    private double computeDistance(DataNode node1, DataNode node2) {
+    public static double computeDistance(DataNode node1, DataNode node2) {
         int len = node1.getValue().length;
         double dist = 0;
         for (int i = 0; i < len; i++) {
@@ -146,11 +146,9 @@ public class KdTree {
      */
     private void createKdTree(KdNode kdNode, List<DataNode> dataNodes){
 
-
         DivideInfo divideInfo = getDivideInfo(dataNodes);
         kdNode.node = divideInfo.dataNode;
         kdNode.kDimensional = divideInfo.getKDimen();
-
 
         List<DataNode> leftDataNodes = new ArrayList<>();
         List<DataNode> rightDataNodes = new ArrayList<>();
@@ -244,7 +242,7 @@ public class KdTree {
         final float kValue = dataNodes.get(randomIndex).getValue()[kDemen];
 
 
-        dataNodes.stream().forEach(dataNode -> {
+        dataNodes.forEach(dataNode -> {
             if(dataNode.getValue()[kDemen] <= kValue){
                 left.add(dataNode);
             }else {

@@ -84,9 +84,9 @@ public class DefaultCubPoint {
      * @param num
      * @return
      */
-    public static PointCloud getPointCloudWithNosiy(int num) {
+    public static PointCloud getPointCloudWithNosiy(int num, int noiseNum) {
         PointCloud pointCloud = getPointCloud(num);
-        PointCloud pointCloudWithNosiy = getNosityPoint(200);
+        PointCloud pointCloudWithNosiy = getNosityPoint(noiseNum);
         pointCloud.setPoints(pointCloud.getPoints()+";"+pointCloudWithNosiy.getPoints());
         return pointCloud;
 

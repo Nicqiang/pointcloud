@@ -20,6 +20,14 @@ public class DataNode implements Serializable {
 
     private boolean used;
 
+    /**
+     * 0未标记
+     * 1核心节点
+     * 2外点
+     * 3噪点
+     */
+    private int scan = 0;
+
     public DataNode(float[] value) {
         this.value = value;
     }
