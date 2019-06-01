@@ -2,6 +2,7 @@ package com.github.nicqiang.pointcloud.web;
 
 import com.github.nicqiang.pointcloud.algorithm.Denoising;
 import com.github.nicqiang.pointcloud.algorithm.simplify.GridKdTreeSimplifyPointCloud;
+import com.github.nicqiang.pointcloud.algorithm.simplify.MinDistSimplifyPointCloud;
 import com.github.nicqiang.pointcloud.algorithm.simplify.RandomSimplifyPointCloud;
 import com.github.nicqiang.pointcloud.domain.Point;
 import com.github.nicqiang.pointcloud.domain.PointCloud;
@@ -30,15 +31,20 @@ public class TestController {
      * @return
      */
     @GetMapping("/points/cub")
-    public PointCloud getCubPoint(@RequestParam(required = false) Boolean noise){
+    public PointCloud getCubPoint(@RequestParam(required = false) Boolean noise, @RequestParam(required = false) Boolean simplify){
         PointCloud pointCloud = null;
         if (noise == null || !noise){
             //pointCloud = DefaultCubPoint.getPointCloud(10000);
-            pointCloud = DefaultCubPoint.getPointCloudWithNosiy(10000, 100);
-            pointCloud = Denoising.dbScanReoveNoise(pointCloud);
+            pointCloud = DefaultCubPoint.getPointCloudWithNosiy(10000, 200);
+            //pointCloud = Denoising.dbScanReoveNoise(pointCloud, 10, 0.2f);
         }else {
             pointCloud = DefaultCubPoint.getPointCloudWithNosiy(10000, 100);
         }
+
+        if(simplify != null && simplify){
+            MinDistSimplifyPointCloud.simplify(pointCloud,20, 0.0002f);
+        }
+
         return pointCloud;
     }
 
@@ -53,8 +59,8 @@ public class TestController {
         PointCloud pointCloud = new PointCloud();
         pointCloud = getCloudPointFromFile("classpath:points/bunny.txt");
         if(factory != null){
-            //RandomSimplifyPointCloud.simplify(pointCloud,factory);
-            GridKdTreeSimplifyPointCloud.simplify(pointCloud,factory);
+            RandomSimplifyPointCloud.simplify(pointCloud,factory);
+            //GridKdTreeSimplifyPointCloud.simplify(pointCloud,factory);
         }
         return pointCloud;
     }

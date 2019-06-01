@@ -3,6 +3,7 @@ package com.github.nicqiang.pointcloud.algorithm.dbscan;
 import com.github.nicqiang.pointcloud.algorithm.tree.DataNode;
 import com.github.nicqiang.pointcloud.algorithm.tree.KdTree;
 import com.github.nicqiang.pointcloud.domain.PointCloud;
+import com.github.nicqiang.pointcloud.utils.KdTreeUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -17,22 +18,11 @@ import java.util.List;
 @Slf4j
 public class DbScan {
 
-    public static PointCloud removeNoise(PointCloud pointCloud){
+    public static PointCloud removeNoise(PointCloud pointCloud, int minPts, float eps){
         long startTime = System.currentTimeMillis();
-        List<DataNode> list = new ArrayList<>();
-        String[] pointStr = pointCloud.getPoints().split(";");
-        for (String s : pointStr) {
-            String[] v = s.split(",");
-            float[] vf = new float[3];
-            for (int i = 0; i < v.length; i++) {
-                vf[i] = Float.valueOf(v[i]);
-            }
-            list.add(new DataNode(vf));
-        }
-        KdTree kdTree = new KdTree(list);
-        //设置阀值
-        int minPts = 5;
-        float eps = 0.5f;
+        KdTree kdTree = KdTreeUtil.pointCloudToKdTree(pointCloud);
+
+        List<DataNode> list = kdTree.getNoeList();
 
         //标记为核心点
         for (DataNode dataNode : list) {

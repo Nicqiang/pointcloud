@@ -46,6 +46,7 @@ public class KdTreeTest {
     public void testGetKNearestDataNode(){
         List<DataNode> data = getData();
         KdTree kdTree = new KdTree(data);
+
         float[] d1 = {2f,4.5f};
         DataNode dataNode = new DataNode(d1);
         List<DataNode> kNearestDataNode = kdTree.getKNearestDataNode(dataNode, 3);

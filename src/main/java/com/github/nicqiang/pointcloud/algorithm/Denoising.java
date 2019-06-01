@@ -16,7 +16,7 @@ public class Denoising {
      * @param pointCloud
      * @return
      */
-    public static PointCloud dbScanReoveNoise(PointCloud pointCloud){
-        return DbScan.removeNoise(pointCloud);
+    public static PointCloud dbScanReoveNoise(PointCloud pointCloud, int minPts, float eps){
+        return DbScan.removeNoise(pointCloud, minPts, eps);
     }
 }

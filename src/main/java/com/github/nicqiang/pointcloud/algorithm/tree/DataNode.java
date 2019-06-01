@@ -28,6 +28,8 @@ public class DataNode implements Serializable {
      */
     private int scan = 0;
 
+    private boolean delete;
+
     public DataNode(float[] value) {
         this.value = value;
     }

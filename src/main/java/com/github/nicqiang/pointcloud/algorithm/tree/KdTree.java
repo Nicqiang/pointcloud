@@ -22,6 +22,14 @@ public class KdTree {
 
     private int kdNodeNumber;
 
+    @Getter
+    private List<DataNode> noeList;
+
+    /**
+     * 点的维度
+     */
+    private int nodeDemen;
+
     private static final Random random = new Random(System.currentTimeMillis());
 
     /**
@@ -30,11 +38,14 @@ public class KdTree {
      */
     public KdTree(List<DataNode> nodeList) {
 
+        this.noeList = nodeList;
+
         KdNode kdNode = new KdNode();
-        createKdTree(kdNode,nodeList);
+        nodeDemen = nodeList.get(0).getValue().length;
+        kdNode.kDimensional = -1;
+        createKdTree(kdNode,nodeList, 0);
         this.kdNode = kdNode;
         this.kdNodeNumber = nodeList.size();
-
     }
 
 
@@ -143,10 +154,31 @@ public class KdTree {
      * 创建一颗树
      * @param kdNode kn node
      * @param dataNodes data list
+     * @param flag 0，1: left, 2:right
+     *
      */
-    private void createKdTree(KdNode kdNode, List<DataNode> dataNodes){
+    private void createKdTree(KdNode kdNode, List<DataNode> dataNodes, int flag){
+        int kd = (kdNode.kDimensional +1 )% this.nodeDemen;
 
-        DivideInfo divideInfo = getDivideInfo(dataNodes);
+        if(dataNodes.size() >= 1 && flag != 0){
+            if (flag == 1){
+                KdNode leftNode = new KdNode();
+                leftNode.kDimensional = kd;
+                kdNode.leftNode = leftNode;
+                kdNode = leftNode;
+            }else if (flag == 2){
+                KdNode rightNode = new KdNode();
+                rightNode.kDimensional = kd;
+                kdNode.rightNode = rightNode;
+                kdNode = rightNode;
+            }
+            if(dataNodes.size() == 1){
+                kdNode.node = dataNodes.get(0);
+                return;
+            }
+        }
+
+        DivideInfo divideInfo = getDivideInfo(dataNodes, kd);
         kdNode.node = divideInfo.dataNode;
         kdNode.kDimensional = divideInfo.getKDimen();
 
@@ -164,17 +196,12 @@ public class KdTree {
 
 
         if(leftDataNodes.size() != 0){
-            KdNode leftKdNode = new KdNode();
-            kdNode.leftNode = leftKdNode;
-            createKdTree(leftKdNode,leftDataNodes);
+            createKdTree(kdNode,leftDataNodes, 1);
         }
 
         if(rightDataNodes.size() != 0){
-            KdNode rightKdNode = new KdNode();
-            kdNode.rightNode = rightKdNode;
-            createKdTree(rightKdNode,rightDataNodes);
+            createKdTree(kdNode,rightDataNodes, 2);
         }
-
 
     }
 
@@ -184,11 +211,15 @@ public class KdTree {
      * @param dataNodes nodes
      * @return
      */
-    private DivideInfo getDivideInfo(List<DataNode> dataNodes){
-        //todo
-        int k = dataNodes.get(0).getValue().length;
+    private DivideInfo getDivideInfo(List<DataNode> dataNodes, int k){
 
-        Double[] variances = new Double[k];
+        //使用平均距离进行
+        double avg = dataNodes.stream().mapToDouble(node -> node.getValue()[k]).average().getAsDouble();
+        DataNode node = findMidPointByAvgNum(dataNodes, k, avg);
+        node.setUsed(true);
+        return new DivideInfo(k, node);
+
+        /*Double[] variances = new Double[k];
         for (int i = 0; i < k; i++) {
             variances[i] = getVariance(dataNodes,i);
         }
@@ -205,7 +236,27 @@ public class KdTree {
         DataNode node = findMidPoint(dataNodes,maxVarIndex);
         node.setUsed(true);
 
-        return new DivideInfo(maxVarIndex,node);
+        return new DivideInfo(maxVarIndex,node);*/
+    }
+
+    /**
+     * 离平均值最近
+     * @param dataNodes
+     * @param  kd
+     * @param avg
+     * @return
+     */
+    private DataNode findMidPointByAvgNum(List<DataNode> dataNodes, int kd, double avg) {
+        DataNode node = null;
+        Double dmin = Double.MAX_VALUE;
+        for (DataNode dataNode : dataNodes) {
+            double dist = Math.abs(dataNode.getValue()[kd] - avg);
+            if (dmin > dist){
+                dmin = dist;
+                node = dataNode;
+            }
+        }
+        return node;
     }
 
     /**
