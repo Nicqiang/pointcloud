@@ -47,7 +47,37 @@ public class DefaultCubPoint {
         }
         sb.deleteCharAt(sb.length()-1);
         pointCloud.setPoints(sb.toString());
+        pointCloud.setPointNum((long)num);
         return pointCloud;
+    }
+
+
+    /**
+     * 某个面很密集
+     * @param num
+     * @return
+     */
+    public static PointCloud getPointCloudWithUnBalance(int num){
+        PointCloud pointCloud = DefaultCubPoint.getPointCloud(num);
+
+        long addPointNum = 3 * num;
+
+        StringBuilder sb = new StringBuilder();
+        DecimalFormat decimalFormat = new DecimalFormat("#.####");
+        for (int i = 0; i < addPointNum; i++) {
+            sb.append(Double.parseDouble(decimalFormat.format(random.nextDouble()*10-5)));
+            sb.append(",");
+            sb.append(Double.parseDouble(decimalFormat.format(random.nextDouble()*10-5)));
+            sb.append(",");
+            sb.append(5);
+            sb.append(";");
+        }
+
+        sb.deleteCharAt(sb.length()-1);
+        pointCloud.setPoints(pointCloud.getPoints() + ";" + sb.toString());
+        pointCloud.setPointNum(pointCloud.getPointNum() + addPointNum);
+        return pointCloud;
+
     }
 
     private static double getPintCord(double i) {

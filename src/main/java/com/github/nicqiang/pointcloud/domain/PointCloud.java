@@ -17,7 +17,7 @@ public class PointCloud implements Serializable {
     /**
      * 点数
      */
-    private Long pointNum;
+    private Long pointNum = 0L;
 
     /**
      * 点,存储格式如下

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by
@@ -46,6 +47,18 @@ public class KdTree {
         createKdTree(kdNode,nodeList, 0);
         this.kdNode = kdNode;
         this.kdNodeNumber = nodeList.size();
+    }
+
+
+    /**
+     * 邻近点，不包含其本身
+     * @param node
+     * @param k
+     * @return
+     */
+    public List<DataNode> getKNearestDataNodeNotWithCurrentPoint(DataNode node, int k){
+        List<DataNode> kNearestDataNode = this.getKNearestDataNode(node, k + 1);
+        return kNearestDataNode.stream().filter(dataNode -> dataNode != node).collect(Collectors.toList());
     }
 
 
@@ -430,7 +443,7 @@ public class KdTree {
          * 替换最大的点
          * @param node
          */
-        public void replaceMaxDataNode(DataNode node) {
+        private void replaceMaxDataNode(DataNode node) {
             this.addDataNode(node);
             DataNode removeData = this.nearestKdNodes.remove(this.nearestKdNodes.size() - 1);
             distMap.remove(removeData);

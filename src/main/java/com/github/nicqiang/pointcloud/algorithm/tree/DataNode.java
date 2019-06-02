@@ -30,7 +30,14 @@ public class DataNode implements Serializable {
 
     private boolean delete;
 
+    /**
+     * 是否为特征点
+     */
+    private boolean feature;
+
     public DataNode(float[] value) {
         this.value = value;
     }
+
+
 }

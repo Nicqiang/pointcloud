@@ -1,5 +1,6 @@
 package com.github.nicqiang.pointcloud.algorithm.simplify;
 
+import com.github.nicqiang.pointcloud.algorithm.matrix.MatrixComputeUtil;
 import com.github.nicqiang.pointcloud.algorithm.tree.DataNode;
 import com.github.nicqiang.pointcloud.algorithm.tree.KdTree;
 import com.github.nicqiang.pointcloud.domain.PointCloud;
@@ -9,30 +10,40 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 /**
- * <h>基于给定距离的简化</h>
+ * <h></h>
  *
  * @author nicqiang
- * @since 2019-06-01
+ * @since 2019-06-02
  */
 @Slf4j
-public class MinDistSimplifyPointCloud {
+public class PcaSimplifyPointCloud {
 
-    public static void simplify(PointCloud pointCloud,int k, float minDist){
+    public static void simplify(PointCloud pointCloud, int k, float eps){
+
         long startTime = System.currentTimeMillis();
+
         KdTree kdTree = KdTreeUtil.pointCloudToKdTree(pointCloud);
         List<DataNode> nodeList = kdTree.getNoeList();
-        nodeList.stream().filter(node -> !node.isDelete()).forEach(dataNode -> {
-            List<DataNode> kNearestDataNode = kdTree.getKNearestDataNodeNotWithCurrentPoint(dataNode, k);
-            kNearestDataNode.stream()
-                    .filter(kDateNode -> !kDateNode.isDelete() && KdTree.computeDistance(dataNode,kDateNode) < minDist)
-                    .forEach(kdNode -> kdNode.setDelete(true));
+
+        nodeList.forEach(dataNode -> {
+            List<DataNode> kNearestDataNode = kdTree.getKNearestDataNode(dataNode, k);
+            float[][] points = new float[kNearestDataNode.size()][3];
+            for (int i = 0; i < points.length; i++) {
+                points[i] = kNearestDataNode.get(i).getValue();
+            }
+            List<Double> eigen = MatrixComputeUtil.eigen(dataNode.getValue(), points);
+            double realWp = computeWp(eigen);
+            if(realWp > eps){
+                dataNode.setFeature(true);
+            }
         });
 
+        //移除所有非特征点
         StringBuilder sb = new StringBuilder();
 
         pointCloud.setPointNum(0L);
 
-        nodeList.stream().filter(node -> !node.isDelete()).forEach(dataNode -> {
+        nodeList.stream().filter(node -> node.isFeature()).forEach(dataNode -> {
             float[] value = dataNode.getValue();
             for (float v : value) {
                 sb.append(v);
@@ -43,6 +54,17 @@ public class MinDistSimplifyPointCloud {
             pointCloud.setPointNum(pointCloud.getPointNum() + 1);
         });
         pointCloud.setPoints(sb.toString());
+
         log.info("cost={}", System.currentTimeMillis() - startTime);
+
+    }
+
+    /**
+     * 计算wp
+     * @param eigen
+     * @return
+     */
+    private static double computeWp(List<Double> eigen){
+        return eigen.get(2)/(eigen.get(0) + eigen.get(1) + eigen.get(2));
     }
 }
