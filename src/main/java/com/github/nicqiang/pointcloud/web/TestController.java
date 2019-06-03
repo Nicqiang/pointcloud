@@ -1,10 +1,7 @@
 package com.github.nicqiang.pointcloud.web;
 
 import com.github.nicqiang.pointcloud.algorithm.Denoising;
-import com.github.nicqiang.pointcloud.algorithm.simplify.GridKdTreeSimplifyPointCloud;
-import com.github.nicqiang.pointcloud.algorithm.simplify.MinDistSimplifyPointCloud;
-import com.github.nicqiang.pointcloud.algorithm.simplify.PcaSimplifyPointCloud;
-import com.github.nicqiang.pointcloud.algorithm.simplify.RandomSimplifyPointCloud;
+import com.github.nicqiang.pointcloud.algorithm.simplify.*;
 import com.github.nicqiang.pointcloud.domain.Point;
 import com.github.nicqiang.pointcloud.domain.PointCloud;
 import com.github.nicqiang.pointcloud.points.DefaultCubPoint;
@@ -39,7 +36,7 @@ public class TestController {
         PointCloud pointCloud = null;
         if (noise == null || !noise){
             //pointCloud = DefaultCubPoint.getPointCloudWithUnBalance(10000);
-            pointCloud = DefaultCubPoint.getPointCloud(1000);
+            pointCloud = DefaultCubPoint.getPointCloud(10000);
             //pointCloud = DefaultCubPoint.getPointCloudWithNosiy(10000, 200);
             //pointCloud = Denoising.dbScanReoveNoise(pointCloud, 10, 0.2f);
         }else {
@@ -48,7 +45,7 @@ public class TestController {
 
         if(simplify != null && simplify){
             //MinDistSimplifyPointCloud.simplify(pointCloud,20, 0.2f);
-            PcaSimplifyPointCloud.simplify(pointCloud,15, 0.5f);
+            //PcaSimplifyPointCloud.simplify(pointCloud,20, 0.02f);
         }
         log.info("pointNum={}", pointCloud.getPointNum());
         return pointCloud;
@@ -61,13 +58,22 @@ public class TestController {
      * @throws IOException
      */
     @GetMapping("/points/bunny")
-    public PointCloud getBunnyPoint(@RequestParam(required = false) Float factory) throws IOException {
+    public PointCloud getBunnyPoint(@RequestParam(required = false) Float factory, @RequestParam(required = false) Boolean simplify) throws IOException {
         PointCloud pointCloud = new PointCloud();
         pointCloud = getCloudPointFromFile("classpath:points/bunny.txt");
         if(factory != null){
-            RandomSimplifyPointCloud.simplify(pointCloud,factory);
+            //RandomSimplifyPointCloud.simplify(pointCloud,factory);
             //GridKdTreeSimplifyPointCloud.simplify(pointCloud,factory);
         }
+        if(simplify != null && simplify){
+            //PcaSimplifyPointCloud.simplify(pointCloud, 10, 0.008f);
+        }
+
+        if(simplify !=null && simplify && factory != null){
+            PcaAndRandomSimplifyPointCloud.simplify(pointCloud, 10, 0.008f, factory);
+        }
+
+        log.info("pointNum={}", pointCloud.getPointNum());
         return pointCloud;
     }
 
@@ -108,11 +114,16 @@ public class TestController {
     }
 
     @GetMapping("/points/cylinder")
-    public PointCloud getCylinder(@RequestParam(required = false) Boolean simplify) throws IOException {
+    public PointCloud getCylinder(@RequestParam(required = false) Float factory,@RequestParam(required = false) Boolean simplify) throws IOException {
         PointCloud pointCloud = this.getCloudPointFromFile("classpath:points/cylinder_asc_point.txt");
 
         if(simplify != null && simplify){
-            MinDistSimplifyPointCloud.simplify(pointCloud, 50, 0.2f);
+            //MinDistSimplifyPointCloud.simplify(pointCloud, 50, 0.2f);
+            //PcaSimplifyPointCloud.simplify(pointCloud, 20, 0.0005f);
+
+        }
+        if(factory != null){
+            PcaAndRandomSimplifyPointCloud.simplify(pointCloud, 20, 0.0005f, factory);
         }
         log.info("pointNum={}", pointCloud.getPointNum());
         return  pointCloud;

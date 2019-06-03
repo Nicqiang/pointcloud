@@ -1,5 +1,6 @@
 package com.github.nicqiang.pointcloud.points;
 
+import com.github.nicqiang.pointcloud.domain.Cub;
 import com.github.nicqiang.pointcloud.domain.PointCloud;
 
 import java.text.DecimalFormat;
@@ -13,6 +14,8 @@ import java.util.Random;
  */
 public class DefaultCubPoint {
     private static final Random random = new Random(System.currentTimeMillis());
+
+    private static final double CUB_SIZE = 0.5;
 
     public static PointCloud getPointCloud(int num){
         if(num == 0){
@@ -37,11 +40,11 @@ public class DefaultCubPoint {
         }*/
         for (int i = 0; i < num; i++) {
             int flag = random.nextInt(4) % 3;
-            sb.append(flag == 0 ?  getPintCord(5) : Double.parseDouble(decimalFormat.format(random.nextDouble()*10-5)));
+            sb.append(flag == 0 ?  getPintCord(CUB_SIZE) : Double.parseDouble(decimalFormat.format(random.nextDouble()*CUB_SIZE*2 - CUB_SIZE)));
             sb.append(",");
-            sb.append(flag == 1 ?  getPintCord(5) : Double.parseDouble(decimalFormat.format(random.nextDouble()*10-5)));
+            sb.append(flag == 1 ?  getPintCord(CUB_SIZE) : Double.parseDouble(decimalFormat.format(random.nextDouble()*CUB_SIZE*2 - CUB_SIZE)));
             sb.append(",");
-            sb.append(flag == 2 ?  getPintCord(5) : Double.parseDouble(decimalFormat.format(random.nextDouble()*10-5)));
+            sb.append(flag == 2 ?  getPintCord(CUB_SIZE) : Double.parseDouble(decimalFormat.format(random.nextDouble()*CUB_SIZE*2 - CUB_SIZE)));
             sb.append(";");
 
         }
@@ -65,11 +68,11 @@ public class DefaultCubPoint {
         StringBuilder sb = new StringBuilder();
         DecimalFormat decimalFormat = new DecimalFormat("#.####");
         for (int i = 0; i < addPointNum; i++) {
-            sb.append(Double.parseDouble(decimalFormat.format(random.nextDouble()*10-5)));
+            sb.append(Double.parseDouble(decimalFormat.format(random.nextDouble()*CUB_SIZE*2 - CUB_SIZE)));
             sb.append(",");
-            sb.append(Double.parseDouble(decimalFormat.format(random.nextDouble()*10-5)));
+            sb.append(Double.parseDouble(decimalFormat.format(random.nextDouble()*CUB_SIZE*2 - CUB_SIZE)));
             sb.append(",");
-            sb.append(5);
+            sb.append(CUB_SIZE);
             sb.append(";");
         }
 
@@ -96,11 +99,11 @@ public class DefaultCubPoint {
         DecimalFormat decimalFormat = new DecimalFormat("#.####");
         for (int i = 0; i < num; i++) {
             int flag = random.nextInt(4) % 3;
-            sb.append(flag == 0 ?  getPintCordWithNosiy(5) : Double.parseDouble(decimalFormat.format(random.nextDouble()*10-5)));
+            sb.append(flag == 0 ?  getPintCordWithNosiy(CUB_SIZE) : Double.parseDouble(decimalFormat.format(random.nextDouble()*CUB_SIZE*2-CUB_SIZE)));
             sb.append(",");
-            sb.append(flag == 1 ?  getPintCordWithNosiy(5) : Double.parseDouble(decimalFormat.format(random.nextDouble()*10-5)));
+            sb.append(flag == 1 ?  getPintCordWithNosiy(CUB_SIZE) : Double.parseDouble(decimalFormat.format(random.nextDouble()*CUB_SIZE*2-CUB_SIZE)));
             sb.append(",");
-            sb.append(flag == 2 ?  getPintCordWithNosiy(5) : Double.parseDouble(decimalFormat.format(random.nextDouble()*10-5)));
+            sb.append(flag == 2 ?  getPintCordWithNosiy(CUB_SIZE) : Double.parseDouble(decimalFormat.format(random.nextDouble()*CUB_SIZE*2-CUB_SIZE)));
             sb.append(";");
 
         }

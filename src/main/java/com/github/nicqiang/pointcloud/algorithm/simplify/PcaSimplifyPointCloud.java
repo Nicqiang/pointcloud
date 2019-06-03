@@ -22,21 +22,10 @@ public class PcaSimplifyPointCloud {
 
         long startTime = System.currentTimeMillis();
 
-        KdTree kdTree = KdTreeUtil.pointCloudToKdTree(pointCloud);
-        List<DataNode> nodeList = kdTree.getNoeList();
 
-        nodeList.forEach(dataNode -> {
-            List<DataNode> kNearestDataNode = kdTree.getKNearestDataNode(dataNode, k);
-            float[][] points = new float[kNearestDataNode.size()][3];
-            for (int i = 0; i < points.length; i++) {
-                points[i] = kNearestDataNode.get(i).getValue();
-            }
-            List<Double> eigen = MatrixComputeUtil.eigen(dataNode.getValue(), points);
-            double realWp = computeWp(eigen);
-            if(realWp > eps){
-                dataNode.setFeature(true);
-            }
-        });
+        List<DataNode> nodeList = markFeaturePoint(pointCloud, k, eps);
+
+
 
         //移除所有非特征点
         StringBuilder sb = new StringBuilder();
@@ -59,12 +48,34 @@ public class PcaSimplifyPointCloud {
 
     }
 
+
+    public static List<DataNode> markFeaturePoint(PointCloud pointCloud, int k, float eps){
+        KdTree kdTree = KdTreeUtil.pointCloudToKdTree(pointCloud);
+        List<DataNode> nodeList = kdTree.getNoeList();
+
+        nodeList.forEach(dataNode -> {
+            List<DataNode> kNearestDataNode = kdTree.getKNearestDataNode(dataNode, k);
+            float[][] points = new float[kNearestDataNode.size()][3];
+            for (int i = 0; i < points.length; i++) {
+                points[i] = kNearestDataNode.get(i).getValue();
+            }
+            List<Double> eigen = MatrixComputeUtil.eigen(dataNode.getValue(), points);
+            double realWp = computeWp(eigen);
+            if(realWp > eps){
+                dataNode.setFeature(true);
+            }
+        });
+        return nodeList;
+    }
+
     /**
      * 计算wp
      * @param eigen
      * @return
      */
     private static double computeWp(List<Double> eigen){
-        return eigen.get(2)/(eigen.get(0) + eigen.get(1) + eigen.get(2));
+        return eigen.get(0)/(eigen.get(0) + eigen.get(1) + eigen.get(2));
     }
+
+
 }
