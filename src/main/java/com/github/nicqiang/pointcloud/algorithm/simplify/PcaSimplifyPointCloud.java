@@ -18,6 +18,8 @@ import java.util.List;
 @Slf4j
 public class PcaSimplifyPointCloud {
 
+    private static final double MIN_EPS = 1.0E-6;
+
     public static void simplify(PointCloud pointCloud, int k, float eps){
 
         long startTime = System.currentTimeMillis();
@@ -63,6 +65,9 @@ public class PcaSimplifyPointCloud {
             double realWp = computeWp(eigen);
             if(realWp > eps){
                 dataNode.setFeature(true);
+            }
+            if(realWp < MIN_EPS){
+                dataNode.setDelete(true);
             }
         });
         return nodeList;

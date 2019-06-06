@@ -35,6 +35,11 @@ public class DataNode implements Serializable {
      */
     private boolean feature;
 
+    /**
+     * pca计算的wp的值
+     */
+    private double wp;
+
     public DataNode(float[] value) {
         this.value = value;
     }

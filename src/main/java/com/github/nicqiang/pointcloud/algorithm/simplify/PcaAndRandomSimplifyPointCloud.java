@@ -23,7 +23,7 @@ public class PcaAndRandomSimplifyPointCloud {
         long startTime = System.currentTimeMillis();
 
         List<DataNode> nodeList = PcaSimplifyPointCloud.markFeaturePoint(pointCloud, k, eps);
-        nodeList.stream().filter(node -> !node.isFeature()).forEach(dataNode -> {
+        nodeList.stream().filter(node -> !node.isFeature() && !node.isDelete()).forEach(dataNode -> {
             if(random.nextDouble() < factory){
                 dataNode.setDelete(true);
             }

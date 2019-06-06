@@ -129,6 +129,12 @@ public class TestController {
         return  pointCloud;
     }
 
+    @GetMapping("/points/halfSurface")
+    public PointCloud getHlafSurface() throws IOException {
+        PointCloud pointCloud = this.getCloudPointFromFile("classpath:points/half_surface.txt");
+        return pointCloud;
+    }
+
     /**
      * get point from file
      * @param filePath
