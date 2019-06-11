@@ -1,13 +1,19 @@
 package com.github.nicqiang.pointcloud.web;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.nicqiang.pointcloud.common.BaseResponse;
 import com.github.nicqiang.pointcloud.common.BaseResponseBuilder;
+import com.github.nicqiang.pointcloud.common.PageInfo;
 import com.github.nicqiang.pointcloud.repository.PointCloudInfo;
 import com.github.nicqiang.pointcloud.service.PointCloudService;
 import com.github.nicqiang.pointcloud.service.impl.FileStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -38,6 +44,7 @@ public class ApiController {
     @ResponseBody
     public BaseResponse savePointInfo(@RequestBody PointCloudInfo pointCloudInfo){
         pointCloudService.save(pointCloudInfo);
+        log.info("inset point cloud info,{}", JSONObject.toJSONString(pointCloudInfo));
         return BaseResponseBuilder.success();
     }
 
@@ -47,6 +54,7 @@ public class ApiController {
         pointCloudService.save(pointCloudInfo);
         return BaseResponseBuilder.success();
     }
+
 
     @DeleteMapping("/points/{id}")
     @ResponseBody
@@ -61,6 +69,23 @@ public class ApiController {
     public BaseResponse getAll(){
         List<PointCloudInfo> all = pointCloudService.getAll();
         return BaseResponseBuilder.success(all);
+    }
+
+    @GetMapping("/pointpage")
+    @ResponseBody
+    public BaseResponse getAll(PageInfo pageInfo){
+        if(pageInfo.getPage() == null){
+            pageInfo.setPage(0);
+        }
+        if(pageInfo.getSize() == null){
+            pageInfo.setSize(10);
+        }
+        Sort sort = new Sort(Sort.Direction.DESC, "id");
+        Pageable pageable = PageRequest.of(pageInfo.getPage(), pageInfo.getSize(), sort);
+        Page<PointCloudInfo> pointCloudInfos = pointCloudService.getAll(pageable);
+        return BaseResponseBuilder.success(pointCloudInfos);
+
+
     }
 
     @GetMapping("/points/{id}")

@@ -27,7 +27,7 @@ public class PointCloudInfo implements Serializable {
      */
     @Id
     @GeneratedValue
-    @Column(name = "name", nullable = false)
+    @Column(name = "id", nullable = false)
     private Long id;
 
     /**
@@ -66,7 +66,7 @@ public class PointCloudInfo implements Serializable {
      */
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
-    @Column(name = "create_time", nullable = false)
+    @Column(name = "create_time", updatable = false)
     private Date createTime;
 
     /**

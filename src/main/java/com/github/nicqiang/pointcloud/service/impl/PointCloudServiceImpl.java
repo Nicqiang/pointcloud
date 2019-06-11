@@ -1,9 +1,13 @@
 package com.github.nicqiang.pointcloud.service.impl;
 
 import com.github.nicqiang.pointcloud.dao.PointCloudInfoDao;
+import com.github.nicqiang.pointcloud.domain.PointCloud;
 import com.github.nicqiang.pointcloud.repository.PointCloudInfo;
 import com.github.nicqiang.pointcloud.service.PointCloudService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +22,7 @@ import java.util.List;
 @Slf4j
 public class PointCloudServiceImpl implements PointCloudService {
 
+    @Autowired
     private PointCloudInfoDao dao;
 
     @Override
@@ -44,5 +49,10 @@ public class PointCloudServiceImpl implements PointCloudService {
     @Override
     public List<PointCloudInfo> getAll() {
         return dao.findAll();
+    }
+
+    @Override
+    public Page<PointCloudInfo> getAll(Pageable pageable) {
+        return dao.findAll(pageable);
     }
 }
