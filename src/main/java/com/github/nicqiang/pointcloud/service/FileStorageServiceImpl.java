@@ -37,13 +37,14 @@ public class FileStorageServiceImpl implements FileStorageService{
 
     @Override
     public Resource loadAsResource(String filePath) {
-        Resource resource = context.getResource("file:" + filePath);
+        String detailFilePath = this.desPath + filePath;
+        Resource resource = context.getResource("file:" + detailFilePath);
         return resource;
     }
 
     @Override
     public String store(MultipartFile file) throws IOException {
-        String fileName = UuidUtil.gen() + "-" + file.getName();
+        String fileName = UuidUtil.gen() + "-" + file.getOriginalFilename();
         String desFilePath = this.desPath + fileName;
         File desFile = new File(desFilePath);
         try {

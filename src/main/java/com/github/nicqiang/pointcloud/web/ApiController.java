@@ -6,21 +6,14 @@ import com.github.nicqiang.pointcloud.common.BaseResponseBuilder;
 import com.github.nicqiang.pointcloud.common.PageInfo;
 import com.github.nicqiang.pointcloud.repository.PointCloudInfo;
 import com.github.nicqiang.pointcloud.service.PointCloudService;
-import com.github.nicqiang.pointcloud.service.impl.FileStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -31,11 +24,8 @@ import java.util.List;
  */
 @Slf4j
 @RequestMapping("/api")
-@Controller
+@RestController
 public class ApiController {
-
-    @Autowired
-    private FileStorageService fileStorageService;
 
     @Autowired
     private PointCloudService pointCloudService;
@@ -93,36 +83,5 @@ public class ApiController {
     public BaseResponse getById(@PathVariable("id") Long id){
         PointCloudInfo pointCloudInfo = pointCloudService.getById(id);
         return BaseResponseBuilder.success(pointCloudInfo);
-    }
-
-
-
-
-    //upload
-    @PostMapping("/file")
-    public BaseResponse handleFileUpload(@RequestParam("file")MultipartFile file){
-        String filePath = null;
-        try {
-            filePath = fileStorageService.store(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-            log.warn("store failed", e);
-            return BaseResponseBuilder.exception(500, e.getMessage());
-        }
-        return BaseResponseBuilder.success(filePath);
-    }
-
-    /**
-     * 下载文件
-     * @param filePath file path
-     * @return
-     */
-    @GetMapping("file/{filePath}")
-    public ResponseEntity<Resource> getFile(@PathVariable String filePath){
-        Resource file = fileStorageService.loadAsResource(filePath);
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + file.getFilename() + "\"")
-                .body(file);
-
     }
 }
